@@ -12,21 +12,19 @@ From PortfolioProject.dbo.NashvilleHousing
 
 -- Standardize Date Format
 
-
 Select saleDateConverted, CONVERT(Date,SaleDate)
 From PortfolioProject.dbo.NashvilleHousing
-
 
 Update NashvilleHousing
 SET SaleDate = CONVERT(Date,SaleDate)
 
--- If it doesn't Update properly
+-- If it doesn't update properly
 
-ALTER TABLE NashvilleHousing
-Add SaleDateConverted Date;
+-- ALTER TABLE NashvilleHousing
+-- Add SaleDateConverted Date;
 
-Update NashvilleHousing
-SET SaleDateConverted = CONVERT(Date,SaleDate)
+-- Update NashvilleHousing
+-- SET SaleDateConverted = CONVERT(Date,SaleDate)
 
 
  --------------------------------------------------------------------------------------------------------------------------
@@ -90,13 +88,8 @@ Update NashvilleHousing
 SET PropertySplitCity = SUBSTRING(PropertyAddress, CHARINDEX(',', PropertyAddress) + 1 , LEN(PropertyAddress))
 
 
-
-
 Select *
 From PortfolioProject.dbo.NashvilleHousing
-
-
-
 
 
 Select OwnerAddress
@@ -110,9 +103,9 @@ PARSENAME(REPLACE(OwnerAddress, ',', '.') , 3)
 From PortfolioProject.dbo.NashvilleHousing
 
 
-
 ALTER TABLE NashvilleHousing
 Add OwnerSplitAddress Nvarchar(255);
+
 
 Update NashvilleHousing
 SET OwnerSplitAddress = PARSENAME(REPLACE(OwnerAddress, ',', '.') , 3)
@@ -121,9 +114,9 @@ SET OwnerSplitAddress = PARSENAME(REPLACE(OwnerAddress, ',', '.') , 3)
 ALTER TABLE NashvilleHousing
 Add OwnerSplitCity Nvarchar(255);
 
+
 Update NashvilleHousing
 SET OwnerSplitCity = PARSENAME(REPLACE(OwnerAddress, ',', '.') , 2)
-
 
 
 ALTER TABLE NashvilleHousing
@@ -133,25 +126,18 @@ Update NashvilleHousing
 SET OwnerSplitState = PARSENAME(REPLACE(OwnerAddress, ',', '.') , 1)
 
 
-
 Select *
 From PortfolioProject.dbo.NashvilleHousing
 
 
-
-
 --------------------------------------------------------------------------------------------------------------------------
 
-
 -- Change Y and N to Yes and No in "Sold as Vacant" field
-
 
 Select Distinct(SoldAsVacant), Count(SoldAsVacant)
 From PortfolioProject.dbo.NashvilleHousing
 Group by SoldAsVacant
 order by 2
-
-
 
 
 Select SoldAsVacant
@@ -167,10 +153,6 @@ SET SoldAsVacant = CASE When SoldAsVacant = 'Y' THEN 'Yes'
 	   When SoldAsVacant = 'N' THEN 'No'
 	   ELSE SoldAsVacant
 	   END
-
-
-
-
 
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -197,19 +179,14 @@ From RowNumCTE
 Where row_num > 1
 Order by PropertyAddress
 
-
-
+	
 Select *
 From PortfolioProject.dbo.NashvilleHousing
-
-
 
 
 ---------------------------------------------------------------------------------------------------------
 
 -- Delete Unused Columns
-
-
 
 Select *
 From PortfolioProject.dbo.NashvilleHousing
@@ -217,85 +194,3 @@ From PortfolioProject.dbo.NashvilleHousing
 
 ALTER TABLE PortfolioProject.dbo.NashvilleHousing
 DROP COLUMN OwnerAddress, TaxDistrict, PropertyAddress, SaleDate
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
------------------------------------------------------------------------------------------------
------------------------------------------------------------------------------------------------
-
---- Importing Data using OPENROWSET and BULK INSERT	
-
---  More advanced and looks cooler, but have to configure server appropriately to do correctly
---  Wanted to provide this in case you wanted to try it
-
-
---sp_configure 'show advanced options', 1;
---RECONFIGURE;
---GO
---sp_configure 'Ad Hoc Distributed Queries', 1;
---RECONFIGURE;
---GO
-
-
---USE PortfolioProject 
-
---GO 
-
---EXEC master.dbo.sp_MSset_oledb_prop N'Microsoft.ACE.OLEDB.12.0', N'AllowInProcess', 1 
-
---GO 
-
---EXEC master.dbo.sp_MSset_oledb_prop N'Microsoft.ACE.OLEDB.12.0', N'DynamicParameters', 1 
-
---GO 
-
-
----- Using BULK INSERT
-
---USE PortfolioProject;
---GO
---BULK INSERT nashvilleHousing FROM 'C:\Temp\SQL Server Management Studio\Nashville Housing Data for Data Cleaning Project.csv'
---   WITH (
---      FIELDTERMINATOR = ',',
---      ROWTERMINATOR = '\n'
---);
---GO
-
-
----- Using OPENROWSET
---USE PortfolioProject;
---GO
---SELECT * INTO nashvilleHousing
---FROM OPENROWSET('Microsoft.ACE.OLEDB.12.0',
---    'Excel 12.0; Database=C:\Users\alexf\OneDrive\Documents\SQL Server Management Studio\Nashville Housing Data for Data Cleaning Project.csv', [Sheet1$]);
---GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
